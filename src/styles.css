@@ -263,3 +263,9 @@ footer {
         gap: 2px;
     }
 }
+
+@media only screen and (prefers-reduced-motion: reduce) {
+    #sidebar nav {
+        transition: none;
+    }
+}

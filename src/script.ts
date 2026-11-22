@@ -11,6 +11,10 @@ function easeOutExpo(x: number): number {
     return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
 
+function shouldAnimate() {
+    return window.matchMedia(`(prefers-reduced-motion: reduce)`).matches != true;
+}
+
 const COUNT_ANIMATION_DURATION = 2000;
 const COUNT_ANIMATION_STAGGER = 500;
 let formatLong = new Intl.NumberFormat("en-IN");
@@ -24,15 +28,12 @@ fetch("/data/stats.json").then(res => {
         
         let animationStart = Date.now();
         let animationEnd = animationStart + COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * allStats.length
-        let interval: NodeJS.Timeout
-        interval = setInterval(() => {
-            let currentTime = Date.now();
-            if (currentTime > animationEnd) clearInterval(interval);
-            
+        
+        function updateStatElements(currentTime: number | undefined = undefined) {
             allStats.forEach((element, index) => {
                 let statName = element.getAttribute("data-stat");
                 if (!statName) return;
-                let progress = easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1));
+                let progress = currentTime ? easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1)) : 1;
                 let statValue: number = progress == 1 ? stats[statName] : Math.round(stats[statName] * progress);
 
                 let htmlStatDisplayElement = element.querySelector(".stat");
@@ -45,6 +46,17 @@ fetch("/data/stats.json").then(res => {
 
                 htmlStatDisplayElement.innerHTML = formattedStatValue;
             })
-        }, 20);
+        }
+        
+        console.log(shouldAnimate())
+        if (shouldAnimate()) {
+            let interval: NodeJS.Timeout
+            interval = setInterval(() => {
+                let currentTime = Date.now();
+                if (currentTime > animationEnd) clearInterval(interval);
+                
+                updateStatElements(currentTime)
+            }, 20);
+        } else updateStatElements();
     })
 })
