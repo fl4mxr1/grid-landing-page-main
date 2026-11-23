@@ -29,7 +29,7 @@ function shouldAnimate() {
 
 const COUNT_ANIMATION_DURATION = 2000;
 const COUNT_ANIMATION_STAGGER = 500;
-let formatLong = new Intl.NumberFormat("en-IN");
+let formatLong = new Intl.NumberFormat("en-US");
 let formatShort = new Intl.NumberFormat("en-US", {
     notation: "compact", 
     compactDisplay: "short"
