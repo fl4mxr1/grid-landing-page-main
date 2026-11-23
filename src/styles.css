@@ -221,7 +221,7 @@ p {
 }
 
 @media only screen and (width < 850px) {
-    .main {
+    #main {
         display: flex;
         flex-direction: column;
         .hero {
@@ -255,7 +255,7 @@ p {
 }
 
 @media only screen and (width < 525px) {
-    footer {
+    #footer {
         height: max-content;
         flex-direction: column;
         padding: 2rem 2rem;
