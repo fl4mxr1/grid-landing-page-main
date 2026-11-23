@@ -1,3 +1,5 @@
+import stats from "../data/stats.json"
+
 function trapSidebarFocus(enabled: boolean) {
     let htmlMain = document.querySelector("#main") as HTMLElement;
     htmlMain.inert = enabled;
@@ -30,39 +32,36 @@ let formatShort = new Intl.NumberFormat("en-US", {
     notation: "compact", 
     compactDisplay: "short"
 });
-fetch("/data/stats.json").then(res => {
-    res.json().then(stats => {
-        let allStats = document.querySelectorAll(".stats");
+
+let allStats = document.querySelectorAll(".stats");
+
+function updateStatElements(currentTime: number | undefined = undefined, animationStart: number | undefined = undefined) {
+    allStats.forEach((element, index) => {
+        let statName = element.getAttribute("data-stat");
+        if (!statName) return;
+        let progress = currentTime && animationStart ? easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1)) : 1;
+        let statValue: number = progress == 1 ? (stats as Record<string, number>)[statName] : Math.round((stats as Record<string, number>)[statName] * progress);
+
+        let htmlStatDisplayElement = element.querySelector(".stat");
+        if (!htmlStatDisplayElement) return;
+        let formattedStatValue = statValue > 9999 ? formatShort.format(statValue) : formatLong.format(statValue);
         
-        function updateStatElements(currentTime: number | undefined = undefined, animationStart: number | undefined = undefined) {
-            allStats.forEach((element, index) => {
-                let statName = element.getAttribute("data-stat");
-                if (!statName) return;
-                let progress = currentTime && animationStart ? easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1)) : 1;
-                let statValue: number = progress == 1 ? stats[statName] : Math.round(stats[statName] * progress);
-
-                let htmlStatDisplayElement = element.querySelector(".stat");
-                if (!htmlStatDisplayElement) return;
-                let formattedStatValue = statValue > 9999 ? formatShort.format(statValue) : formatLong.format(statValue);
-                
-                if (element.getAttribute("data-stat-format")) {
-                    formattedStatValue = element.getAttribute("data-stat-format")?.replaceAll("{v}", formattedStatValue) || ""
-                }
-
-                htmlStatDisplayElement.innerHTML = formattedStatValue;
-            })
+        if (element.getAttribute("data-stat-format")) {
+            formattedStatValue = element.getAttribute("data-stat-format")?.replaceAll("{v}", formattedStatValue) || ""
         }
-        
-        if (shouldAnimate()) {
-            let animationStart = Date.now();
-            let animationEnd = animationStart + COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * allStats.length
-            let interval: NodeJS.Timeout
-            interval = setInterval(() => {
-                let currentTime = Date.now();
-                if (currentTime > animationEnd) clearInterval(interval);
-                
-                updateStatElements(currentTime, animationStart)
-            }, 20);
-        } else updateStatElements();
+
+        htmlStatDisplayElement.innerHTML = formattedStatValue;
     })
-})
+}
+
+if (shouldAnimate()) {
+    let animationStart = Date.now();
+    let animationEnd = animationStart + COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * allStats.length
+    let interval: NodeJS.Timeout
+    interval = setInterval(() => {
+        let currentTime = Date.now();
+        if (currentTime > animationEnd) clearInterval(interval);
+        
+        updateStatElements(currentTime, animationStart)
+    }, 20);
+} else updateStatElements();
