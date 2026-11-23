@@ -1,9 +1,17 @@
+function trapSidebarFocus(enabled: boolean) {
+    let htmlMain = document.querySelector("#main") as HTMLElement;
+    htmlMain.inert = enabled;
+}
+
 function toggleSidebar() {
     let htmlSidebar = document.querySelector("#sidebar");
     if (htmlSidebar?.getAttribute("data-visible") != null) {
         htmlSidebar?.removeAttribute("data-visible")
+        trapSidebarFocus(false);
     } else {
         htmlSidebar?.setAttribute("data-visible", "");
+        (htmlSidebar?.querySelector("li a") as HTMLElement)?.focus();
+        trapSidebarFocus(true);
     }
 }
 
@@ -26,14 +34,11 @@ fetch("/data/stats.json").then(res => {
     res.json().then(stats => {
         let allStats = document.querySelectorAll(".stats");
         
-        let animationStart = Date.now();
-        let animationEnd = animationStart + COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * allStats.length
-        
-        function updateStatElements(currentTime: number | undefined = undefined) {
+        function updateStatElements(currentTime: number | undefined = undefined, animationStart: number | undefined = undefined) {
             allStats.forEach((element, index) => {
                 let statName = element.getAttribute("data-stat");
                 if (!statName) return;
-                let progress = currentTime ? easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1)) : 1;
+                let progress = currentTime && animationStart ? easeOutExpo(Math.min((currentTime - animationStart) / (COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * index), 1)) : 1;
                 let statValue: number = progress == 1 ? stats[statName] : Math.round(stats[statName] * progress);
 
                 let htmlStatDisplayElement = element.querySelector(".stat");
@@ -48,14 +53,15 @@ fetch("/data/stats.json").then(res => {
             })
         }
         
-        console.log(shouldAnimate())
         if (shouldAnimate()) {
+            let animationStart = Date.now();
+            let animationEnd = animationStart + COUNT_ANIMATION_DURATION + COUNT_ANIMATION_STAGGER * allStats.length
             let interval: NodeJS.Timeout
             interval = setInterval(() => {
                 let currentTime = Date.now();
                 if (currentTime > animationEnd) clearInterval(interval);
                 
-                updateStatElements(currentTime)
+                updateStatElements(currentTime, animationStart)
             }, 20);
         } else updateStatElements();
     })

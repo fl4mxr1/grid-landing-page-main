@@ -39,7 +39,7 @@ p {
     min-height: 700px;
 }
 
-.nav {
+#nav {
     grid-row: 1;
     grid-column: 1;
     position: fixed;
@@ -90,7 +90,7 @@ p {
     }
 }
 
-.main {
+#main {
     display: grid;
     grid-row: 2;
     grid-column: 1;
@@ -199,13 +199,18 @@ p {
                         text-decoration-inset: 0 0;
                         text-decoration: underline;
                     }
+                    &:focus {
+                        text-decoration-inset: 0 0;
+                        text-decoration: underline;
+                        outline-offset: 8px;
+                    }
                 }
             }
         }
     }
 }
 
-footer {
+#footer {
     grid-row: 3;
     grid-column: 1;
     width: 100%;

@@ -7,24 +7,21 @@
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
   <link rel="stylesheet" href="src/styles.css">
 
-  <script src="src/script.ts"></script>
-
   <title>Frontend Mentor | Grid landing page</title>
 </head>
 <body>
   <div class="wrapper">
-    <nav class="nav">
+    <nav id="nav">
       <a class="wordmark" href="" aria-labelledby="navWordmark">
         <div class="dot"></div>
         <p class="text" id="navWordmark">Bridge Collective</p>
       </a>
       <button class="menu-hamburger" id="sidebarToggle" onclick="toggleSidebar()">
-        <img class="inactive" src="/assets/images/icon-menu.svg" alt="Menu">
-        <img class="active" src="/assets/images/icon-close.svg" alt="Close">
+        <img class="inactive" src="/assets/images/icon-menu.svg" alt="Open Sidebar">
+        <img class="active" src="/assets/images/icon-close.svg" alt="Close Sidebar">
       </button>
     </nav>
-
-    <main class="main">
+    <main id="main">
       <article class="hero">
         <h1>A classroom for every child.</h1>
         <p>We fund the schools, train the teachers, and measure what works — so every child we reach today becomes a graduate tomorrow.</p>
@@ -75,9 +72,13 @@
       </section>
       
     </main>
+    <footer id="footer">
+      <p>© 2026 Bridge Collective</p>
+      <p>Registered charity 12345678</p>
+    </footer>
 
     <aside id="sidebar">
-      <nav>
+      <nav aria-modal="true">
         <ul>
           <li><a href="">About</a></li>
           <li><a href="">Our Work</a></li>
@@ -88,10 +89,7 @@
       </nav>
     </aside>
 
-    <footer>
-      <p>© 2026 Bridge Collective</p>
-      <p>Registered charity 12345678</p>
-    </footer>
+    <script src="src/script.ts"></script>
   </div>
 </body>
 </html>
