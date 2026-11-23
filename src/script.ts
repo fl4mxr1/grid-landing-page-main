@@ -17,6 +17,8 @@ function toggleSidebar() {
     }
 }
 
+document.querySelector("#sidebarToggle")?.addEventListener("click", toggleSidebar)
+
 function easeOutExpo(x: number): number {
     return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
